@@ -1,0 +1,58 @@
+{%extends 'main.html'%}
+
+{% block content%}
+
+
+<style>
+    .home-container{
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+
+</style>
+
+<h1>Home templates</h1>
+
+<dic class="home-container">
+ 
+
+    <div>
+       <h3>Browse Topics</h3>
+       <hr>
+
+       <dv>
+            <a href="{%url 'home'%}">All</a>
+    
+       </dv>
+       {%for topic in topics%}
+       <div>
+
+            <a href="{%url 'home'%}?q={{topic.name}}">{{topic}}</a>
+       </div>
+       {%endfor%}
+    </div>
+
+    <div>
+        <h5> {{questions_count}} questoins</h5>
+        <a href="{% url 'create-question'%}"> Create Question</a>
+      <div>
+           {%for question in questions%}
+               <div>
+                   <span>@{{question.host.username}}</span>
+                   <a href="{%url 'update-question' question.id%}">Edit</a>
+                   <a href="{%url 'delete-question' pk=question.id %}">Delete</a>
+
+                   
+                   <p><small>{{question.topic}}</small></p>
+                   <h5>{{question.id}}.<a href="/base/question/{{question.id}}">{{question.write_question}}</a> </h5>
+               </div>
+
+
+            {%endfor%}
+      </div>
+    </div>
+
+
+ 
+</div>
+{%endblock%}
