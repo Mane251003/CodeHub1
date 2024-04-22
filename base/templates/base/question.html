@@ -4,5 +4,32 @@
 
 {%block content%}
 <h1>{{question.write_question}}</h1>
-<h3>{{message.comment}}</h3>
+
+
+<div class="comment-wrapper">
+    <h3>Conversation</h3>
+    {%for message in question_messages%}
+    <div>
+       
+        <small>@{{message.user}} {{message.created|timesince}} ago</small>
+        <h4>{{message.comment}}</h4>
+    </div>
+    
+    <hr>
+    {%endfor%}
+</div>
+
+{%if request.user.is_authenticated%}
+<div class="comment-form">
+    <form method="POST" action="">
+        {%csrf_token%}
+        <input type="text" name="comment" placeholder="Write your message here..."/>
+
+
+
+    </form>
+
+
+</div>
+{%endif%}
 {%endblock%}

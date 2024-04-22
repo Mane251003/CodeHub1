@@ -26,6 +26,14 @@ class Message(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE)
     question=models.ForeignKey(Question, on_delete=models.CASCADE, null=False)
     comment=models.TextField(max_length=50)
+
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='replies',
+        on_delete=models.CASCADE
+    )
     
     updated=models.DateTimeField(auto_now=True)
     created=models.DateTimeField(auto_now_add=True)

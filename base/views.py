@@ -1,39 +1,72 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib import messages
+
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login,logout
+from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from .models import Question, Topic, Message
 from .forms import QuestionForm
+from django.contrib.auth import logout as auth_logout
 
 
-def loginPage(request):
+def login1(request):
+
+    page='login'
+    if request.user.is_authenticated:
+        return redirect('home')
+
+
+
     username=None
     password=None
     if request.method=="POST":
-        username=request.POST.get('username')
+        username=request.POST.get('username').lower()
         password=request.POST.get('password')
 
-    try:
-        user=User.objects.get(username=username)
-    except:
-        messages.error(request, "User doesn't exist")
+        try:
+           user=User.objects.get(username=username)
+        except:
+           messages.error(request, "User doesn't exist")
 
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return redirect('home')
-    else:
-        messages.error(request, 'Username or Password does not exist')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Username or Password does not exist')
 
-    context={}
+    context={'page':page}
     return render(request, 'base/login_register.html', context)
 
 
-def logoutUser(request):
-    logout(request)
+def logout(request):
+    auth_logout(request)
     return redirect('home')
 
+
+
+def register(request):
+    form=UserCreationForm()
+    if request.method=="POST":
+        form=UserCreationForm(request.POST)
+        if form.is_valid():
+            user=form.save(commit=False)
+            user.username=user.username.lower()
+            user.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request,'An error occured during registration')
+
+
+    form=UserCreationForm()
+    context={'form':form}
+ 
+
+    return render(request, 'base/login_register.html', context)
 
 def home(request):
     q=request.GET.get('q') if request.GET.get('q') != None else ''
@@ -48,10 +81,25 @@ def home(request):
 
 def question(request, pk):
     question=Question.objects.get(id=pk)
-    message=Message.objects.get(id=pk)
-    context={"question":question, "message": message}
+ 
+    #question_messages=Message.objects.all()
+    question_messages=question.message_set.all().order_by('-created')
+  
+    if request.method=="POST":
+        message=Message.objects.create(
+            user=request.user,
+            question=question,
+            comment=request.POST.get('comment')
+        )
+        return redirect('question', pk=question.id)
+
+
+    context={"question":question, "question_messages": question_messages}
     return render(request, "base/question.html", context)
 
+
+
+@login_required(login_url='login')
 def create_question(request):
     form=QuestionForm()
     if request.method=="POST":
@@ -63,10 +111,14 @@ def create_question(request):
     context={'form':form}
     return render(request, "base/question_form.html", context)
 
-
+@login_required(login_url='login')
 def update_question(request, pk):
     question=Question.objects.get(id=pk)
     form=QuestionForm(instance=question)
+
+
+    if request.user!=question.host:
+        return HttpResponse("Your are not allowes here!")
 
     if request.method=="POST":
         form=QuestionForm(request.POST, instance=question)
@@ -77,9 +129,13 @@ def update_question(request, pk):
     context={'form':form}
     return render(request, "base/question_form.html", context)
 
-    
+@login_required(login_url='login')
 def delete_question(request, pk):
     question=Question.objects.get(id=pk)
+
+    if request.user!=question.host:
+        return HttpResponse("Your are not allowes here!")
+    
     if request.method=="POST":
         question.delete()
         return redirect("home")

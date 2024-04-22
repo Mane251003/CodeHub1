@@ -38,11 +38,13 @@
       <div>
            {%for question in questions%}
                <div>
-                   <span>@{{question.host.username}}</span>
+                   
+                   
+                   {% if request.user == question.host%}
                    <a href="{%url 'update-question' question.id%}">Edit</a>
                    <a href="{%url 'delete-question' pk=question.id %}">Delete</a>
-
-                   
+                   {%endif%}
+                   <span>@{{question.host.username}}</span>
                    <p><small>{{question.topic}}</small></p>
                    <h5>{{question.id}}.<a href="/base/question/{{question.id}}">{{question.write_question}}</a> </h5>
                </div>
