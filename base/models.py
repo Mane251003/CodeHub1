@@ -13,6 +13,7 @@ class Question(models.Model):
     host=models.ForeignKey(User,on_delete=models.SET_NULL, null=True)
     topic=models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     write_question=models.TextField(max_length=50, null=False)
+    participants=models.ManyToManyField(User, related_name="participants", blank=True)
     updated=models.DateTimeField(auto_now=True)
     created=models.DateTimeField(auto_now_add=True)
 

@@ -3,13 +3,29 @@
 {%extends 'main.html'%}
 
 {%block content%}
-<h1>{{question.write_question}}</h1>
 
 
-<div class="comment-wrapper">
-    <h3>Conversation</h3>
-    {%for message in question_messages%}
-    <div>
+<style>
+    .question-container{
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+
+    }
+</style>
+
+
+<div class="question-container">
+   <div>
+    <h1>{{question.write_question}}</h1>
+    <h5>Topic: {{question.topic}}</h5>
+
+
+   <div class="comment-wrapper">
+      <h3>Conversation</h3>
+      <hr>
+      {%for message in question_messages%}
+      <div>
+        <a href="{%url 'delete-message'%}">Delete</a>
        
         <small>@{{message.user}} {{message.created|timesince}} ago</small>
         <h4>{{message.comment}} </h4>
@@ -35,31 +51,49 @@
             {% endfor %}
         </ul>
         {% endif %}
-      
-    </div>
+      </div>
     
-    <hr>
-    {%endfor%}
-</div>
+      <hr>
+      {%endfor%}
+    </div>
 
+    {%if request.user.is_authenticated%}  
+    <div class="comment-form">
+        <form method="POST" action="">
+           {%csrf_token%}
+           <input type="text" name="comment" placeholder="Write your message here..."/>
+
+        </form>
+
+    </div>
+    {%endif%}
+   </div>
+
+   <div>
+       <h3>Participants</h3> 
+       <hr>
+       {%for user in participants%}
+            <div>
+                <p>@{{user.username}} </p>
+            </div>
+           
+
+
+
+       {%endfor%}
+    
+   </div>
+
+
+   
+    
+</div>
 <script>
     function showReplyForm(messageId) {
         var form = document.getElementById('reply-form-' + messageId);
         form.style.display = (form.style.display === 'none') ? 'block' : 'none';
     }
 </script>
-
-{%if request.user.is_authenticated%}
-<div class="comment-form">
-    <form method="POST" action="">
-        {%csrf_token%}
-        <input type="text" name="comment" placeholder="Write your message here..."/>
-
-    </form>
-
-</div>
-{%endif%}
-
 {%endblock%}
 
 

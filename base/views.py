@@ -86,7 +86,7 @@ def question(request, pk):
  
     #question_messages=Message.objects.all()
     question_messages=question.message_set.filter(parent=None).order_by('-created')
-  
+    participants=question.participants.all() 
     if request.method=="POST":
         parent_id=request.POST.get('parent_id')
         parent_comment=Message.objects.filter(id=parent_id).first() if parent_id else None
@@ -99,11 +99,11 @@ def question(request, pk):
             parent=parent_comment
         )
             
-        
+        question.participants.add(request.user)
         return redirect('question', pk=question.id)
 
     
-    context={"question":question, "question_messages": question_messages}
+    context={"question":question, "question_messages": question_messages, 'participants': participants}
     return render(request, "base/question.html", context)
 
 
