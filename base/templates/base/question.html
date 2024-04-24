@@ -12,12 +12,42 @@
     <div>
        
         <small>@{{message.user}} {{message.created|timesince}} ago</small>
-        <h4>{{message.comment}}</h4>
+        <h4>{{message.comment}} </h4>
+
+        <button onclick="showReplyForm({{message.id}})">Reply</button>
+
+        <div id="reply-form-{{ message.id }}" class="reply-Sform" style="display: none;">
+            <form method="POST">
+                {% csrf_token %}
+                <textarea name="comment" placeholder="Write your answer">@{{message.user}} </textarea>
+                <input type="hidden" name="parent_id" value="{{ message.id }}">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        {% if message.replies.count > 0 %}
+        <ul>
+            {% for reply in message.replies.all %}
+            <li>
+                <strong>{{ reply.user.username }}</strong>  <small>{{reply.created|timesince}} ago</small>
+                <p>{{ reply.comment }}</p> 
+                <hr>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      
     </div>
     
     <hr>
     {%endfor%}
 </div>
+
+<script>
+    function showReplyForm(messageId) {
+        var form = document.getElementById('reply-form-' + messageId);
+        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
+    }
+</script>
 
 {%if request.user.is_authenticated%}
 <div class="comment-form">
@@ -25,11 +55,12 @@
         {%csrf_token%}
         <input type="text" name="comment" placeholder="Write your message here..."/>
 
-
-
     </form>
-
 
 </div>
 {%endif%}
+
 {%endblock%}
+
+
+

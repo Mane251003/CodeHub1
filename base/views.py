@@ -39,7 +39,7 @@ def login1(request):
             messages.error(request, 'Username or Password does not exist')
 
     context={'page':page}
-    return render(request, 'base/login_register.html', context)
+    return render(request, 'base/login.html', context)
 
 
 def logout(request):
@@ -66,7 +66,7 @@ def register(request):
     context={'form':form}
  
 
-    return render(request, 'base/login_register.html', context)
+    return render(request, 'base/register.html', context)
 
 def home(request):
     q=request.GET.get('q') if request.GET.get('q') != None else ''
@@ -79,23 +79,33 @@ def home(request):
     context={"questions": questions, "topics": topics, "questions_count":questions_count}
     return render(request, "base/home.html", context)
 
+
+@login_required
 def question(request, pk):
     question=Question.objects.get(id=pk)
  
     #question_messages=Message.objects.all()
-    question_messages=question.message_set.all().order_by('-created')
+    question_messages=question.message_set.filter(parent=None).order_by('-created')
   
     if request.method=="POST":
+        parent_id=request.POST.get('parent_id')
+        parent_comment=Message.objects.filter(id=parent_id).first() if parent_id else None
+
+
         message=Message.objects.create(
             user=request.user,
             question=question,
-            comment=request.POST.get('comment')
+            comment=request.POST.get('comment'),
+            parent=parent_comment
         )
+            
+        
         return redirect('question', pk=question.id)
 
-
+    
     context={"question":question, "question_messages": question_messages}
     return render(request, "base/question.html", context)
+
 
 
 
