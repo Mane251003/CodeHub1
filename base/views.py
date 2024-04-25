@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 
@@ -17,7 +17,6 @@ def login1(request):
     page='login'
     if request.user.is_authenticated:
         return redirect('home')
-
 
 
     username=None
@@ -152,7 +151,33 @@ def delete_question(request, pk):
     context={'obj': question}
     return render(request, "base/delete.html", context)
 
+@login_required(login_url='login')
+def delete_message(request, pk):
+    message=Message.objects.get(id=pk)
 
+    if request.user!=message.user:
+        return HttpResponse("Your are not allowes here!")
+    
+    if request.method=="POST":
+        message.delete()
+        return redirect("home")
+    context={'obj': message}
+    return render(request, "base/delete.html", context)
+
+
+@login_required(login_url='login')
+def delete_reply(request, pk):
+    reply=get_object_or_404(Message,id=pk)
+    question_id=reply.question.id
+
+    if request.user!=reply.user:
+        return HttpResponse("Your are not allowes here!")
+    
+    if request.method=="POST":
+        reply.delete()
+        return redirect("question", pk=question_id)
+    context={'obj': reply}
+    return render(request, "base/delete_reply.html", context)
 
 
 

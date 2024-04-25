@@ -16,6 +16,7 @@
 
 <div class="question-container">
    <div>
+    <h5>@{{question.host}}</h5>
     <h1>{{question.write_question}}</h1>
     <h5>Topic: {{question.topic}}</h5>
 
@@ -25,13 +26,15 @@
       <hr>
       {%for message in question_messages%}
       <div>
-        <a href="{%url 'delete-message'%}">Delete</a>
-       
+        {% if request.user == message.user%}
+        
+        <a href="{%url 'delete-message' message.id %}">Delete</a>
+        {%endif%}
         <small>@{{message.user}} {{message.created|timesince}} ago</small>
         <h4>{{message.comment}} </h4>
 
         <button onclick="showReplyForm({{message.id}})">Reply</button>
-
+        
         <div id="reply-form-{{ message.id }}" class="reply-Sform" style="display: none;">
             <form method="POST">
                 {% csrf_token %}
@@ -40,11 +43,23 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
+    
         {% if message.replies.count > 0 %}
         <ul>
             {% for reply in message.replies.all %}
             <li>
-                <strong>{{ reply.user.username }}</strong>  <small>{{reply.created|timesince}} ago</small>
+
+                <strong>{{ reply.user.username }}</strong>  
+                <small>{{reply.created|timesince}} ago</small>
+               
+
+                {%if request.user == reply.user%} 
+                <a href="{%url 'delete-reply' reply.id %}">Delete</a>
+                {%endif%}
+
+
+
+                
                 <p>{{ reply.comment }}</p> 
                 <hr>
             </li>
@@ -76,16 +91,10 @@
             <div>
                 <p>@{{user.username}} </p>
             </div>
-           
-
-
-
+        
        {%endfor%}
     
    </div>
-
-
-   
     
 </div>
 <script>

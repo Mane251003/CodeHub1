@@ -1,0 +1,17 @@
+{%extends 'main.html'%}
+
+{%block content%}
+<h1>Delete Reply </h1>
+<form  method=POST actiom="" >
+    {%csrf_token%}
+    <p>Are you sure that you want to delete this reply?</p> 
+    <strong>{{obj.comment}}</strong>
+    <br>
+    <a href="{%url 'question' pk=obj.question.id%}">NO,Go back</a>
+    <input type="submit" value="Submit">
+   
+</form>
+
+
+
+{%endblock content%}
