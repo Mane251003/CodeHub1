@@ -12,7 +12,7 @@ from .forms import QuestionForm
 from django.contrib.auth import logout as auth_logout
 
 
-def login1(request):
+def login_(request):
 
     page='login'
     if request.user.is_authenticated:
@@ -85,8 +85,11 @@ def question(request, pk):
     question=Question.objects.get(id=pk)
  
     #question_messages=Message.objects.all()
-    question_messages=question.message_set.filter(parent=None)
+    question_messages=question.message_set.filter(parent=None).order_by('-created')
     participants=question.participants.all() 
+
+    reply_form_id=request.GET.get('reply_form_id')
+
 
 
 
@@ -106,7 +109,7 @@ def question(request, pk):
         return redirect('question', pk=question.id)
 
     
-    context={"question":question, "question_messages": question_messages, 'participants': participants}
+    context={"question":question, "question_messages": question_messages, 'participants': participants, 'reply_form_id':reply_form_id}
     return render(request, "base/question.html", context)
 
 

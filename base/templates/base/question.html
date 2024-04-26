@@ -11,6 +11,14 @@
         grid-template-columns: 3fr 1fr;
 
     }
+    .visible {
+    display: block;
+    }
+
+    .hidden {
+    display: none;
+    }
+
 </style>
 
 
@@ -30,15 +38,24 @@
         
         <a href="{%url 'delete-message' message.id %}">Delete</a>
         {%endif%}
+    
         <small>@{{message.user}} {{message.created|timesince}} ago</small>
+
+  
         <h4>{{message.comment}} </h4>
 
-        <button onclick="showReplyForm({{ message.id }})">Reply</button>
+        <a href="{% url 'question' pk=question.id%}?reply_form_id={{message.id}}">Reply</a>
         
-        <div id="reply-form-{{ message.id }}" class="reply-Sform" style="display: none;">
+       
+
+    
+
+        <div id="reply-form-{{ message.id }}" class="reply-Sform {% if reply_form_id == message.id|stringformat:'s' %}visible{% else %}hidden{% endif %}">
+
+
             <form method="POST">
                 {% csrf_token %}
-                <textarea name="comment" placeholder="Write your answer">@{{message.user}} </textarea>
+                <textarea name="comment" placeholder="Write your answer"></textarea>
                 <input type="hidden" name="parent_id" value="{{ message.id }}">
                 <button type="submit">Submit</button>
             </form>
@@ -63,9 +80,9 @@
             {% endfor %}
         </ul>
         {% endif %}
-      </div>
+       </div>
     
-      <hr>
+       <hr>
       {%endfor%}
     </div>
 
@@ -94,12 +111,7 @@
    </div>
     
 </div>
-<script>
-    function showReplyForm(messageId) {
-        var form = document.getElementById('reply-form-' + messageId);
-        form.style.display = (form.style.display === 'none') ? 'block' : 'none';
-    }
-</script>
+
 {%endblock%}
 
 
