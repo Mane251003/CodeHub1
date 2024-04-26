@@ -33,7 +33,7 @@
         <small>@{{message.user}} {{message.created|timesince}} ago</small>
         <h4>{{message.comment}} </h4>
 
-        <button onclick="showReplyForm({{message.id}})">Reply</button>
+        <button onclick="showReplyForm({{ message.id }})">Reply</button>
         
         <div id="reply-form-{{ message.id }}" class="reply-Sform" style="display: none;">
             <form method="POST">
@@ -57,9 +57,6 @@
                 <a href="{%url 'delete-reply' reply.id %}">Delete</a>
                 {%endif%}
 
-
-
-                
                 <p>{{ reply.comment }}</p> 
                 <hr>
             </li>

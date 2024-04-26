@@ -74,8 +74,9 @@ def home(request):
         Q(write_question__icontains=q)
         )
     questions_count=questions.count()
+    question_messages=Message.objects.filter(Q(question__topic__name__icontains=q))
     topics=Topic.objects.all()
-    context={"questions": questions, "topics": topics, "questions_count":questions_count}
+    context={"questions": questions, "topics": topics, "questions_count":questions_count, "question_messages":question_messages}
     return render(request, "base/home.html", context)
 
 
@@ -84,8 +85,11 @@ def question(request, pk):
     question=Question.objects.get(id=pk)
  
     #question_messages=Message.objects.all()
-    question_messages=question.message_set.filter(parent=None).order_by('-created')
+    question_messages=question.message_set.filter(parent=None)
     participants=question.participants.all() 
+
+
+
     if request.method=="POST":
         parent_id=request.POST.get('parent_id')
         parent_comment=Message.objects.filter(id=parent_id).first() if parent_id else None
@@ -106,6 +110,15 @@ def question(request, pk):
     return render(request, "base/question.html", context)
 
 
+
+def userProfile(request, pk):
+    user=User.objects.get(id=pk)
+    questions=user.question_set.all()
+    question_messages=user.message_set.all()
+    topics=Topic.objects.all()
+
+    context={'user':user, 'questions':questions, 'question_messages':question_messages, 'topics':topics}
+    return render(request, 'base/profile.html', context)
 
 
 @login_required(login_url='login')

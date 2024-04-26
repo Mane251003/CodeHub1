@@ -1,0 +1,14 @@
+
+{%for question in questions%}
+    <div>
+        {% if request.user == question.host%}
+           <a href="{%url 'update-question' question.id%}">{{question.id}}.  Edit</a>
+           <a href="{%url 'delete-question' pk=question.id %}">Delete</a>
+        {%endif%}
+        <a href="{%url 'user-profile' question.host.id %}">@{{question.host.username}}</a>
+        <h5><a href="/base/question/{{question.id}}">{{question.write_question}}</a> </h5>
+        <p><small> topic: {{question.topic}}</small></p>
+    </div>
+
+
+{%endfor%}
