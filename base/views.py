@@ -74,7 +74,7 @@ def home(request):
         Q(write_question__icontains=q)
         )
     questions_count=questions.count()
-    question_messages=Message.objects.filter(Q(question__topic__name__icontains=q))
+    question_messages=Message.objects.filter(Q(question__topic__name__icontains=q)).order_by('-created')
     topics=Topic.objects.all()
     context={"questions": questions, "topics": topics, "questions_count":questions_count, "question_messages":question_messages}
     return render(request, "base/home.html", context)
@@ -89,6 +89,8 @@ def question(request, pk):
     participants=question.participants.all() 
 
     reply_form_id=request.GET.get('reply_form_id')
+
+    show_replies_count=int(request.GET.get('show_replies_count', 3))
 
 
 
@@ -109,7 +111,9 @@ def question(request, pk):
         return redirect('question', pk=question.id)
 
     
-    context={"question":question, "question_messages": question_messages, 'participants': participants, 'reply_form_id':reply_form_id}
+    context={"question":question, "question_messages": question_messages,
+              'participants': participants, 'reply_form_id':reply_form_id,
+              'show_replies_count':show_replies_count}
     return render(request, "base/question.html", context)
 
 
@@ -117,7 +121,7 @@ def question(request, pk):
 def userProfile(request, pk):
     user=User.objects.get(id=pk)
     questions=user.question_set.all()
-    question_messages=user.message_set.all()
+    question_messages=user.message_set.all().order_by('-created')
     topics=Topic.objects.all()
 
     context={'user':user, 'questions':questions, 'question_messages':question_messages, 'topics':topics}
@@ -130,6 +134,8 @@ def create_question(request):
     if request.method=="POST":
         form=QuestionForm(request.POST)
         if form.is_valid():
+            question=form.save(commit=False)
+            question.host=request.user
             form.save()
             return redirect('home')
         

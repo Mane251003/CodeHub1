@@ -46,7 +46,7 @@
 
         <a href="{% url 'question' pk=question.id%}?reply_form_id={{message.id}}">Reply</a>
         
-       
+           
 
     
 
@@ -55,7 +55,7 @@
 
             <form method="POST">
                 {% csrf_token %}
-                <textarea name="comment" placeholder="Write your answer"></textarea>
+                <textarea name="comment" placeholder="Write your answer">@{{message.user}} </textarea>
                 <input type="hidden" name="parent_id" value="{{ message.id }}">
                 <button type="submit">Submit</button>
             </form>
@@ -64,6 +64,7 @@
         {% if message.replies.count > 0 %}
         <ul>
             {% for reply in message.replies.all %}
+            {% if forloop.counter <= show_replies_count %}
             <li>
 
                 <strong>{{ reply.user.username }}</strong>  
@@ -77,7 +78,13 @@
                 <p>{{ reply.comment }}</p> 
                 <hr>
             </li>
+            {% endif %}
             {% endfor %}
+
+            {% if message.replies.count > show_replies_count %}
+            <!-- "Show More" link that increments the displayed reply count -->
+            <a href="{% url 'question' pk=question.id %}?show_replies_count={{ show_replies_count|add:3 }}">Show more</a>
+            {% endif %}
         </ul>
         {% endif %}
        </div>
