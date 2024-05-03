@@ -121,7 +121,7 @@
               <input name="comment" placeholder="Write your message here..." /></form>
           </div>
         </div>
-        <!-- Room End -->
+        <!-- Question End -->
 
         <!--   Start -->
         <div class="participants">
@@ -130,7 +130,7 @@
             {%for user in participants%}
             <a href="{% url 'user-profile' user.id %}" class="participant">
               <div class="avatar avatar--medium">
-                <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                <img src="" />
               </div>
               <p>
                 {{user.username}}
