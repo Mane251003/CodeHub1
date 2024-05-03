@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from .models import Question, Topic, Message
-from .forms import QuestionForm
+from .forms import QuestionForm, UserForm
 from django.contrib.auth import logout as auth_logout
 
 
@@ -21,6 +21,7 @@ def login_(request):
 
     username=None
     password=None
+    
     if request.method=="POST":
         username=request.POST.get('username').lower()
         password=request.POST.get('password')
@@ -72,7 +73,7 @@ def home(request):
     questions=Question.objects.filter(
         Q(topic__name__icontains=q)|
         Q(write_question__icontains=q)
-        )
+        ).order_by('-created')
     questions_count=questions.count()
     question_messages=Message.objects.filter(Q(question__topic__name__icontains=q)).order_by('-created')
     topics=Topic.objects.all()
@@ -130,34 +131,52 @@ def userProfile(request, pk):
 
 @login_required(login_url='login')
 def create_question(request):
-    form=QuestionForm()
-    if request.method=="POST":
-        form=QuestionForm(request.POST)
-        if form.is_valid():
-            question=form.save(commit=False)
-            question.host=request.user
-            form.save()
-            return redirect('home')
+    form = QuestionForm()
+    topics = Topic.objects.all()
+
+    if request.method == 'POST':
+        topic_name = request.POST.get('question_topic')  # Fetch correct field name
         
-    context={'form':form}
-    return render(request, "base/question_form.html", context)
+        # Validate the topic name to avoid IntegrityError
+        if not topic_name:
+            context = {'form': form, 'topics': topics, 'error': 'Topic name is required.'}
+            return render(request, 'base/question_form.html', context)
+
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+        Question.objects.create(
+            host=request.user,
+            topic=topic,
+            write_question=request.POST.get('write_question'),
+        )
+
+        return redirect('home')
+
+    context = {'form': form, 'topics': topics}
+    return render(request, 'base/question_form.html', context)
+
 
 @login_required(login_url='login')
 def update_question(request, pk):
     question=Question.objects.get(id=pk)
     form=QuestionForm(instance=question)
+    topics=Topic.objects.all()
 
 
     if request.user!=question.host:
         return HttpResponse("Your are not allowes here!")
 
     if request.method=="POST":
-        form=QuestionForm(request.POST, instance=question)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
+        topic_name = request.POST.get('question_topic') 
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+        question.topic=topic
+        question.write_question=request.POST.get('write_question')
+        question.save()
+      
+        return redirect('home')
         
-    context={'form':form}
+    context={'form':form, 'topics':topics, 'question':question}
     return render(request, "base/question_form.html", context)
 
 @login_required(login_url='login')
@@ -202,7 +221,22 @@ def delete_reply(request, pk):
     return render(request, "base/delete_reply.html", context)
 
 
+@login_required(login_url='login')
+def update_user(request):
+    user=request.user
+    form=UserForm(instance=user)
+    context={'form':form}
 
+    if request.method == "POST":
+        form=UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return  redirect('user-profile', pk=user.id)
+
+
+
+
+    return render(request, 'base/update-user.html', context)
 
     
 

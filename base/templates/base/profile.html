@@ -1,33 +1,54 @@
+
 {% extends 'main.html'%}
 
+{%block content%}
+  <main class="profile-page layout layout--3">
+    <div class="container">
+      <!-- Topics Start -->
+      
+      {% include 'base/topics_component.html'%}
+      
+      <!-- Topics End -->
 
-{% block content %}
+      <!-- Question List Start -->
+      
+        <div class="roomList">
+          <div class="profile">
+            <div class="profile__avatar">
+              <div class="avatar avatar--large active">
+                <img src="" />
+              </div>
+            </div>
+            <div class="profile__info">
+              <h3>{{user.username}}</h3>
+              <p>@{{user.username}}</p>
+              {%if request.user == user%}
+              <a href="{%url 'update-user'%}" class="btn btn--main btn--pill">Edit Profile</a>
+              {%endif%}
+            </div>
+          
+          </div>
+  
+          <div class="roomList__header">
+            <div>
+              <h2>Study Questions Hosted by {{user.username}}</a>
+              </h2>
+            </div>
+          </div>
+     
+          {% include 'base/question_component.html'%}
 
-<style>
-    .profile-container{
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-    }
-</style>
+         
+        </div>
+  
+     
+      <!-- Question List End -->
 
-
-
- <h1>{{user.username}}</h1>
- <div class="profile-container">
-       
-
-
-       <div>
-          {% include 'base/topics_component.html'%}
-       </div>
-
-
-       <div>
-          {%include 'base/question_component.html'%}
-       </div>
-
-       <div>
-          {%include 'base/activity_component.html'%}
-       </div>
- </div>
-{% endblock content%}
+      <!-- Activities Start -->
+      
+        {% include 'base/activity_component.html' %}
+      
+      <!-- Activities End -->
+    </div>
+  </main>
+{%endblock content%}
