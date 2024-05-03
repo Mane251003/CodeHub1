@@ -32,7 +32,7 @@ class Message(models.Model):
         'self',
         null=True,
         blank=True,
-        related_name='replies',
+        related_name='replies', 
         on_delete=models.CASCADE
     )
     

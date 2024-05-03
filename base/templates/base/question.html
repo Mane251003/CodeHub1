@@ -2,6 +2,18 @@
 
 {%block content%}
 
+<style>
+
+  .visible {
+  display: block;
+  }
+
+  .hidden {
+  display: none;
+  }
+
+</style>
+
     <main class="profile-page layout layout--2">
       <div class="container">
         <!-- Question Start -->
@@ -84,7 +96,7 @@
                     <div class="thread__author">
                       <a href="{%url 'user-profile' user.id %}" class="thread__authorInfo">
                         <div class="avatar avatar--small">
-                          <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                          <img src="" />
                         </div>
                         <span>@{{message.user.username}}</span>
                       </a>
@@ -106,8 +118,49 @@
                   </div>
                   <div class="thread__details">
                     {{message.comment}}
+                   
 
+                    <a href="{% url 'question' pk=question.id%}?reply_form_id={{message.id}}">
+                      <p>Reply</p>
+                    </a>
+                    <div id="reply-form-{{ message.id }}" class="reply-Sform {% if reply_form_id == message.id|stringformat:'s' %}visible{% else %}hidden{% endif %}">
+
+
+                      <form method="POST">
+                          {% csrf_token %}
+                          <textarea name="comment" placeholder="Write your answer">@{{message.user}} </textarea>
+                          <input type="hidden" name="parent_id" value="{{ message.id }}">
+                          <button type="submit">Submit</button>
+                      </form>
+                    </div>
                   </div>
+                  {% if message.replies.count > 0 %}
+                  <ul>
+                      {% for reply in message.replies.all %}
+                      {% if forloop.counter <= show_replies_count %}
+                      <li>
+          
+                          <strong>{{ reply.user.username }}</strong>  
+                          <small>{{reply.created|timesince}} ago</small>
+                         
+          
+                          {%if request.user == reply.user%} 
+                          <a href="{%url 'delete-reply' reply.id %}">Delete</a>
+                          {%endif%}
+          
+                          <p>   {{ reply.comment }}</p> 
+                          <hr>
+                      </li>
+                      {% endif %}
+                      {% endfor %}
+          
+                      {% if message.replies.count > show_replies_count %}
+                      <!-- "Show More" link that increments the displayed reply count -->
+                      <a href="{% url 'question' pk=question.id %}?show_replies_count={{ show_replies_count|add:3 }}">Show more</a>
+                      {% endif %}
+                  </ul>
+                  {% endif %}
+                  
                 </div>
                 {%endfor%}
  
@@ -121,7 +174,7 @@
               <input name="comment" placeholder="Write your message here..." /></form>
           </div>
         </div>
-        <!-- Room End -->
+        <!-- Question End -->
 
         <!--   Start -->
         <div class="participants">
@@ -130,7 +183,7 @@
             {%for user in participants%}
             <a href="{% url 'user-profile' user.id %}" class="participant">
               <div class="avatar avatar--medium">
-                <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                <img src="" />
               </div>
               <p>
                 {{user.username}}
