@@ -1,0 +1,73 @@
+{%extends 'main.html'%}
+
+
+<!-- base/information.html -->
+<!-- Base Information Template -->
+
+<style>
+
+    /* Custom styles for the information page */
+body {
+    font-family: Arial, sans-serif;  /* Simple and widely supported font */
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Default Bootstrap secondary color */
+    color: white;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Darken on hover */
+    text-decoration: none;
+}
+
+</style>
+
+
+{%block content%}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Information about {{ topic.name }}</title>
+
+</head>
+<body>
+    <div class="container my-5">
+        <!-- Topic Information -->
+        <div class="row">
+            <div class="col">
+                <h1>Information about {{ topic.name }}</h1>
+                <p>{{ topic.description }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'home'%}" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+
+   
+</body>
+</html>
+
+
+
+{% endblock content%}

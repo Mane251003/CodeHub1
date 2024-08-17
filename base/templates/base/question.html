@@ -16,7 +16,8 @@
 
     <main class="profile-page layout layout--2">
       <div class="container">
-        <!-- Question Start -->
+      
+        
         <div class="room">
           <div class="room__top">
             <div class="room__topLeft">
@@ -79,7 +80,7 @@
                 <p>Hosted By</p>
                 <a href="{% url 'user-profile' question.host.id %}" class="room__author">
                   <div class="avatar avatar--small">
-                    <img src="https://randomuser.me/api/portraits/men/37.jpg" />
+                    <img src="" />
                   </div>
                   <span>@{{user.username}}</span>
                 </a>
@@ -135,27 +136,27 @@
                     </div>
                   </div>
                   {% if message.replies.count > 0 %}
-                  <ul>
+                  <ul style="padding-left: 20px;">
                       {% for reply in message.replies.all %}
-                      {% if forloop.counter <= show_replies_count %}
-                      <li>
-          
-                          <strong>{{ reply.user.username }}</strong>  
-                          <small>{{reply.created|timesince}} ago</small>
+                         {% if forloop.counter <= show_replies_count %}
+                          <li>
+                            <hr>
+                            <strong>{{ reply.user.username }}</strong>  
+                            <small>{{reply.created|timesince}} ago</small>
                          
           
-                          {%if request.user == reply.user%} 
-                          <a href="{%url 'delete-reply' reply.id %}">Delete</a>
-                          {%endif%}
+                            {%if request.user == reply.user%} 
+                            <a href="{%url 'delete-reply' reply.id %}">Delete</a>
+                            {%endif%}
           
-                          <p>   {{ reply.comment }}</p> 
-                          <hr>
-                      </li>
-                      {% endif %}
+                            <p>   {{ reply.comment }}</p> 
+                            <hr>
+                          </li>
+                         {% endif %}
                       {% endfor %}
-          
+                      
                       {% if message.replies.count > show_replies_count %}
-                      <!-- "Show More" link that increments the displayed reply count -->
+                      
                       <a href="{% url 'question' pk=question.id %}?show_replies_count={{ show_replies_count|add:3 }}">Show more</a>
                       {% endif %}
                   </ul>
@@ -174,9 +175,8 @@
               <input name="comment" placeholder="Write your message here..." /></form>
           </div>
         </div>
-        <!-- Question End -->
+   
 
-        <!--   Start -->
         <div class="participants">
           <h3 class="participants__top">Participants <span>({{participants.count}} Joined)</span></h3>
           <div class="participants__list scroll">
@@ -193,7 +193,7 @@
             {%endfor%}
           </div>
         </div>
-        <!--  End -->
+
       </div>
     </main>
     <script src="script.js"></script>

@@ -1,0 +1,74 @@
+{% extends 'main.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CodeHub</title>
+  <link rel="stylesheet" type="text/css" href="/static/styles/style1.css">
+</head>
+<body>
+
+ 
+  <main class="layout layout--1">
+    <div class="container">
+
+   
+      <section class="hero">
+        <div class="hero__content">
+          <div class="hero__logo">
+            <img src="/static/images/logo.jpg" alt="CodeHub Logo" />
+          </div>
+          <h1>Welcome to CodeHub</h1>
+          <p>Your one-stop community for programmers.
+            Where coders connect, learn and share.
+          </p>
+          <a class="btn btn--main" href="{% url 'home' %}">Get Started</a>
+        </div>
+      </section>
+
+      <section class="about">
+        <h2>About CodeHub</h2>
+        <p>
+          CodeHub is an online community designed for programmers of all levels
+          to share knowledge, ask questions, and get answers. Our goal
+          is to create a space where developers can connect, learn, and grow.
+          We believe in the power of community and the value of learning
+          from each other.
+        </p>
+        <p>
+          Whether you're a beginner learning your first programming language or 
+          an experienced developer, CodeHub has something to offer. Join us to 
+          explore new technologies, best practices, and contribute to a growing 
+          community of developers.
+        </p>
+      </section>
+
+ 
+      <section class="features">
+        <h2>Core Features</h2>
+        <div class="features__list">
+          <div class="feature">
+            <h3>Ask Questions</h3>
+            <p>Get answers to your programming questions from a community of experts.</p>
+          </div>
+          <div class="feature">
+            <h3>Share Knowledge</h3>
+            <p>Contribute your expertise and help others on their programming journey.</p>
+          </div>
+          <div class="feature">
+            <h3>Collaborate</h3>
+            <p>Find collaborators for open-source projects and work together on new ideas.</p>
+          </div>
+        </div>
+      </section>
+
+
+
+    </div>
+  </main>
+
+</body>
+</html>
+
+{% endblock %}

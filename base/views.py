@@ -68,11 +68,19 @@ def register(request):
 
     return render(request, 'base/register.html', context)
 
+
+def introduction(request):
+    topics=Topic.objects.all()
+    context={'topics':topics}
+    return render(request, 'base/introduction.html', context)
+
+
+
 def home(request):
     q=request.GET.get('q') if request.GET.get('q') != None else ''
     questions=Question.objects.filter(
-        Q(topic__name__icontains=q)|
-        Q(write_question__icontains=q)
+        Q(topic__name__icontains=q)
+        
         ).order_by('-created')
     questions_count=questions.count()
     question_messages=Message.objects.filter(Q(question__topic__name__icontains=q)).order_by('-created')
@@ -117,6 +125,12 @@ def question(request, pk):
               'show_replies_count':show_replies_count}
     return render(request, "base/question.html", context)
 
+def information(request, pk):
+    topic=Topic.objects.get(id=pk)
+    
+    context={'topic':topic}
+
+    return render(request,'base/information.html', context)
 
 
 def userProfile(request, pk):
@@ -135,9 +149,8 @@ def create_question(request):
     topics = Topic.objects.all()
 
     if request.method == 'POST':
-        topic_name = request.POST.get('question_topic')  # Fetch correct field name
-        
-        # Validate the topic name to avoid IntegrityError
+        topic_name = request.POST.get('question_topic') 
+
         if not topic_name:
             context = {'form': form, 'topics': topics, 'error': 'Topic name is required.'}
             return render(request, 'base/question_form.html', context)
@@ -239,5 +252,3 @@ def update_user(request):
     return render(request, 'base/update-user.html', context)
 
     
-
-

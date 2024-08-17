@@ -12,7 +12,7 @@
   --color-bg: #2d2d39;
   --color-success: #5dd693;
   --color-error: #fc4b0b;
-}
+} 
 
 /*========== base styles ==========*/
 
@@ -1092,10 +1092,18 @@ a {
   gap: 1rem;
 }
 
-.thread__details {
-  font-size: 1.4rem;
-  margin-top: 0.5rem;
+
+
+.thread__details ul {
+  margin-left: 20px; /* Adjust as needed */
 }
+.thread__details ul li {
+  padding-left: 10px;
+  border-left: 1px solid #ddd; /* Optional border to indicate nesting */
+}
+
+
+
 
 .room__message {
   padding: 2rem;
