@@ -138,21 +138,21 @@
                   {% if message.replies.count > 0 %}
                   <ul style="padding-left: 20px;">
                       {% for reply in message.replies.all %}
-                         {% if forloop.counter <= show_replies_count %}
-                          <li>
-                            <hr>
-                            <strong>{{ reply.user.username }}</strong>  
-                            <small>{{reply.created|timesince}} ago</small>
-                         
-          
-                            {%if request.user == reply.user%} 
-                            <a href="{%url 'delete-reply' reply.id %}">Delete</a>
-                            {%endif%}
-          
-                            <p>   {{ reply.comment }}</p> 
-                            <hr>
-                          </li>
-                         {% endif %}
+                      {% if forloop.counter <= show_replies_count %}
+                      <li>
+                        <hr>
+                        <strong>{{ reply.user.username }}</strong>  
+                        <small>{{reply.created|timesince}} ago</small>
+                        
+                        {% if request.user == reply.user %} 
+                        <a href="{% url 'delete-reply' reply.id %}">Delete</a>
+                        {% endif %}
+                        
+                        <p>{{ reply.comment }}</p> 
+                        <hr>
+                      </li>
+                    {% endif %}
+                    
                       {% endfor %}
                       
                       {% if message.replies.count > show_replies_count %}
@@ -175,7 +175,11 @@
               <input name="comment" placeholder="Write your message here..." /></form>
           </div>
         </div>
+<<<<<<< HEAD
    
+=======
+        <!-- Question End -->
+>>>>>>> b7b738720f280ebcb640d6628ef9a12b602d3425
 
         <div class="participants">
           <h3 class="participants__top">Participants <span>({{participants.count}} Joined)</span></h3>
